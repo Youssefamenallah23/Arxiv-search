@@ -1,0 +1,3 @@
+{"query_id":"train-001","split":"train","query":"Which papers introduce transformer architectures for sequence modeling?","relevant_paper_ids":["1706.03762"],"notes":"Example only. Replace with IDs present in your frozen corpus."}
+{"query_id":"validation-001","split":"validation","query":"Which papers compare contrastive learning methods for vision representations?","relevant_paper_ids":["REPLACE_WITH_CORPUS_ID"],"notes":"Example only. Replace and expand to 25 validation queries."}
+{"query_id":"test-001","split":"test","query":"Which papers propose retrieval-augmented methods for question answering?","relevant_paper_ids":["REPLACE_WITH_CORPUS_ID"],"notes":"Example only. Do not use test during tuning."}

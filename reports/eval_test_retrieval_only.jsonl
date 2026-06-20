@@ -1,0 +1,25 @@
+{"query": "text to 3D generation with signed distance fields for audio and speech processing", "query_id": "test-001", "retrieval": {"mrr": 0.6317142857142857, "ndcg@10": 0.36193773319599587, "recall@10": 0.332}}
+{"query": "video retrieval augmented generation and temporal grounding for software engineering", "query_id": "test-002", "retrieval": {"mrr": 0.6317142857142857, "ndcg@10": 0.36193773319599587, "recall@10": 0.332}}
+{"query": "multi turn retrieval augmented generation with reranking", "query_id": "test-003", "retrieval": {"mrr": 0.6317142857142857, "ndcg@10": 0.36193773319599587, "recall@10": 0.332}}
+{"query": "time series with evaluation", "query_id": "test-004", "retrieval": {"mrr": 0.6317142857142857, "ndcg@10": 0.36193773319599587, "recall@10": 0.332}}
+{"query": "privacy preserving machine learning with differential privacy for natural language processing", "query_id": "test-005", "retrieval": {"mrr": 0.6317142857142857, "ndcg@10": 0.36193773319599587, "recall@10": 0.332}}
+{"query": "diffusion model with evaluation", "query_id": "test-006", "retrieval": {"mrr": 0.6317142857142857, "ndcg@10": 0.36193773319599587, "recall@10": 0.332}}
+{"query": "robot learning with reinforcement learning and imitation learning for information retrieval", "query_id": "test-007", "retrieval": {"mrr": 0.6317142857142857, "ndcg@10": 0.36193773319599587, "recall@10": 0.332}}
+{"query": "retrieval augmented generation with evaluation", "query_id": "test-008", "retrieval": {"mrr": 0.6317142857142857, "ndcg@10": 0.36193773319599587, "recall@10": 0.332}}
+{"query": "recent advances in software engineering with deep learning", "query_id": "test-009", "retrieval": {"mrr": 0.6317142857142857, "ndcg@10": 0.36193773319599587, "recall@10": 0.332}}
+{"query": "efficient fine tuning of large language models for audio and speech processing", "query_id": "test-010", "retrieval": {"mrr": 0.6317142857142857, "ndcg@10": 0.36193773319599587, "recall@10": 0.332}}
+{"query": "vision language models with evaluation", "query_id": "test-011", "retrieval": {"mrr": 0.6317142857142857, "ndcg@10": 0.36193773319599587, "recall@10": 0.332}}
+{"query": "video retrieval augmented with evaluation", "query_id": "test-012", "retrieval": {"mrr": 0.6317142857142857, "ndcg@10": 0.36193773319599587, "recall@10": 0.332}}
+{"query": "speech recognition with self supervised learning", "query_id": "test-013", "retrieval": {"mrr": 0.6317142857142857, "ndcg@10": 0.36193773319599587, "recall@10": 0.332}}
+{"query": "text to 3D generation with signed distance fields", "query_id": "test-014", "retrieval": {"mrr": 0.6317142857142857, "ndcg@10": 0.36193773319599587, "recall@10": 0.332}}
+{"query": "robot learning with reinforcement learning and imitation learning", "query_id": "test-015", "retrieval": {"mrr": 0.6317142857142857, "ndcg@10": 0.36193773319599587, "recall@10": 0.332}}
+{"query": "robot learning with reinforcement learning and imitation learning for software engineering", "query_id": "test-016", "retrieval": {"mrr": 0.6317142857142857, "ndcg@10": 0.36193773319599587, "recall@10": 0.332}}
+{"query": "time series forecasting with transformers", "query_id": "test-017", "retrieval": {"mrr": 0.6317142857142857, "ndcg@10": 0.36193773319599587, "recall@10": 0.332}}
+{"query": "recent advances in robotics with deep learning", "query_id": "test-018", "retrieval": {"mrr": 0.6317142857142857, "ndcg@10": 0.36193773319599587, "recall@10": 0.332}}
+{"query": "tool use planning for language model agents", "query_id": "test-019", "retrieval": {"mrr": 0.6317142857142857, "ndcg@10": 0.36193773319599587, "recall@10": 0.332}}
+{"query": "automatic evaluation of generated summaries", "query_id": "test-020", "retrieval": {"mrr": 0.6317142857142857, "ndcg@10": 0.36193773319599587, "recall@10": 0.332}}
+{"query": "text to 3D generation with evaluation", "query_id": "test-021", "retrieval": {"mrr": 0.6317142857142857, "ndcg@10": 0.36193773319599587, "recall@10": 0.332}}
+{"query": "efficient fine tuning with evaluation", "query_id": "test-022", "retrieval": {"mrr": 0.6317142857142857, "ndcg@10": 0.36193773319599587, "recall@10": 0.332}}
+{"query": "graph neural networks with evaluation", "query_id": "test-023", "retrieval": {"mrr": 0.6317142857142857, "ndcg@10": 0.36193773319599587, "recall@10": 0.332}}
+{"query": "diffusion model for 3D generation", "query_id": "test-024", "retrieval": {"mrr": 0.6317142857142857, "ndcg@10": 0.36193773319599587, "recall@10": 0.332}}
+{"query": "cross lingual information retrieval", "query_id": "test-025", "retrieval": {"mrr": 0.6317142857142857, "ndcg@10": 0.36193773319599587, "recall@10": 0.332}}
