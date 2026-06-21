@@ -6,7 +6,6 @@ from pathlib import Path
 from arxiv_rag.io import read_jsonl
 from arxiv_rag.schema import Paper, QueryLabel
 
-
 EXPECTED_SPLITS = {"train": 100, "validation": 25, "test": 25}
 
 

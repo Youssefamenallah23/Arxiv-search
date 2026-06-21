@@ -1,14 +1,13 @@
 from __future__ import annotations
 
 import argparse
+import sys
 from collections import Counter
 from pathlib import Path
-import sys
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
 from arxiv_rag.labels import EXPECTED_SPLITS, load_labels, load_papers, validate_labels
-
 
 PLACEHOLDERS = {"REPLACE_WITH_CORPUS_ID", "1706.03762"}
 

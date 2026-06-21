@@ -1,14 +1,13 @@
 from __future__ import annotations
 
 import argparse
-from pathlib import Path
 import sys
+from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
 from arxiv_rag.labels import load_papers
 from arxiv_rag.lexical import TfidfPaperRanker
-
 
 SEED_QUERIES = [
     "retrieval augmented generation for factual question answering",
@@ -95,12 +94,15 @@ def main() -> None:
             ]
         )
         for rank, (paper, score) in enumerate(ranker.rank(query, args.limit), start=1):
+            abstract = paper.abstract[:700]
+            if len(paper.abstract) > 700:
+                abstract += "..."
             lines.extend(
                 [
                     f"{rank}. `{paper.paper_id}` score={score:.4f}",
                     f"   Title: {paper.title}",
                     f"   Categories: {', '.join(paper.categories)}",
-                    f"   Abstract: {paper.abstract[:700]}{'...' if len(paper.abstract) > 700 else ''}",
+                    f"   Abstract: {abstract}",
                     "",
                 ]
             )

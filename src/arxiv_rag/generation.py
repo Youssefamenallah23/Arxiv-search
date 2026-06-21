@@ -1,10 +1,9 @@
 from __future__ import annotations
 
-from collections.abc import Sequence
 import time
+from collections.abc import Sequence
 
 from arxiv_rag.config import Settings
-
 
 SYSTEM_PROMPT = """You are a research assistant that answers questions about AI/ML papers.
 
@@ -45,7 +44,9 @@ def _retry_request(
             last_exc = exc
             sleep_secs = base_delay * (2**attempt)
             print(
-                f"  API error ({exc.code} attempt {attempt + 1}/{max_retries}), retrying in {sleep_secs:.0f}s...",
+                f"  API error ({exc.code}) "
+                f"attempt {attempt + 1}/{max_retries}, "
+                f"retrying in {sleep_secs:.0f}s...",
                 end=" ",
                 flush=True,
             )
@@ -59,8 +60,9 @@ def generate_answer(
     model_name: str = "gemini-3.1-flash-lite",
     system_prompt: str = SYSTEM_PROMPT,
 ) -> tuple[str, float, dict]:
-    from google import genai
     import time
+
+    from google import genai
 
     settings = Settings()
     client = genai.Client(api_key=settings.gemini_api_key)

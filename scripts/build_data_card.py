@@ -1,10 +1,10 @@
 from __future__ import annotations
 
 import argparse
+import sys
 from collections import Counter
 from datetime import datetime
 from pathlib import Path
-import sys
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
@@ -12,7 +12,7 @@ from arxiv_rag.labels import load_papers
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Generate a short data card for a corpus snapshot.")
+    parser = argparse.ArgumentParser(description="Generate a data card for a corpus snapshot.")
     parser.add_argument("--corpus", required=True)
     parser.add_argument("--output", required=True)
     args = parser.parse_args()

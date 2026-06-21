@@ -157,10 +157,12 @@ async def query(req: QueryRequest):
         )
     except FileNotFoundError:
         logger.exception("Corpus file not found")
-        raise HTTPException(status_code=500, detail="Corpus file not found — check data/ directory")
+        raise HTTPException(
+            status_code=500, detail="Corpus file not found — check data/ directory"
+        ) from None
     except ValueError as exc:
         logger.exception("Invalid query parameters")
-        raise HTTPException(status_code=422, detail=str(exc))
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
     except RuntimeError as exc:
         logger.exception("Pipeline error")
-        raise HTTPException(status_code=500, detail=str(exc))
+        raise HTTPException(status_code=500, detail=str(exc)) from exc

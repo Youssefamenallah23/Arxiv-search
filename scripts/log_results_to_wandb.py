@@ -1,8 +1,8 @@
 from __future__ import annotations
 
 import json
-from pathlib import Path
 import sys
+from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
@@ -53,7 +53,7 @@ def main() -> None:
     run.log({"retrieval": retrieval_metrics})
     run.log({"generation": gen_metrics})
 
-    for i, r in enumerate(rows):
+    for _i, r in enumerate(rows):
         run.log(
             {
                 f"query/{r['query_id']}/recall@5": r["retrieval"]["recall@5"],

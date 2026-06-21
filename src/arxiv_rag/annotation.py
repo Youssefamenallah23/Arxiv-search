@@ -10,7 +10,6 @@ from arxiv_rag.labels import EXPECTED_SPLITS, load_labels, load_papers, validate
 from arxiv_rag.lexical import TfidfPaperRanker
 from arxiv_rag.schema import Paper, QueryLabel
 
-
 PLACEHOLDER_IDS = {"REPLACE_WITH_CORPUS_ID", "1706.03762"}
 
 

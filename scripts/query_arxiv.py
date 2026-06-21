@@ -1,15 +1,15 @@
 from __future__ import annotations
 
 import argparse
-from pathlib import Path
 import sys
 import time
+from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
 from arxiv_rag.chunking import chunk_papers, proportional_overlap
 from arxiv_rag.config import DEFAULT_EMBEDDING_MODELS
-from arxiv_rag.embeddings import SentenceTransformerEncoder, CrossEncoderReranker
+from arxiv_rag.embeddings import CrossEncoderReranker, SentenceTransformerEncoder
 from arxiv_rag.generation import generate_answer
 from arxiv_rag.labels import load_papers
 

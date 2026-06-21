@@ -31,7 +31,9 @@ def main() -> None:
 
     chunks = [Chunk.model_validate(row) for row in read_jsonl(args.chunks)]
     encoder = SentenceTransformerEncoder(DEFAULT_EMBEDDING_MODELS.get(args.model, args.model))
-    vectors, _ = encoder.encode_documents([chunk.text for chunk in chunks], batch_size=args.batch_size)
+    vectors, _ = encoder.encode_documents(
+        [chunk.text for chunk in chunks], batch_size=args.batch_size
+    )
 
     client = QdrantClient(url=url)
     client.recreate_collection(

@@ -1,7 +1,7 @@
 from __future__ import annotations
 
-from collections.abc import Sequence
 import time
+from collections.abc import Sequence
 
 import numpy as np
 
@@ -67,5 +67,7 @@ class CrossEncoderReranker:
         pairs = [(query, text) for _, text in candidates]
         scores = self.model.predict(pairs, batch_size=batch_size)
         elapsed = time.perf_counter() - started
-        ranked = sorted(zip(candidates, scores), key=lambda item: float(item[1]), reverse=True)
+        ranked = sorted(
+            zip(candidates, scores, strict=True), key=lambda item: float(item[1]), reverse=True
+        )
         return [chunk_id for (chunk_id, _), _ in ranked], elapsed

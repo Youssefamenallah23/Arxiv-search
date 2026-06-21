@@ -1,12 +1,11 @@
 from __future__ import annotations
 
+import time
+import xml.etree.ElementTree as ET
 from collections.abc import Iterator
 from datetime import UTC, datetime
-import time
 from urllib.parse import urlencode
 from urllib.request import urlopen
-import xml.etree.ElementTree as ET
-
 
 ARXIV_API_URL = "https://export.arxiv.org/api/query"
 ATOM_NS = {"atom": "http://www.w3.org/2005/Atom", "arxiv": "http://arxiv.org/schemas/atom"}

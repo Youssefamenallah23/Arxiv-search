@@ -1,9 +1,9 @@
 from __future__ import annotations
 
 import argparse
-from pathlib import Path
 import sys
 import time
+from pathlib import Path
 
 from tqdm import tqdm
 
@@ -11,23 +11,22 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
 from arxiv_rag.chunking import chunk_papers, proportional_overlap
 from arxiv_rag.config import DEFAULT_EMBEDDING_MODELS
-from arxiv_rag.embeddings import SentenceTransformerEncoder, CrossEncoderReranker
+from arxiv_rag.embeddings import CrossEncoderReranker, SentenceTransformerEncoder
 from arxiv_rag.generation import generate_answer
 from arxiv_rag.generation_eval import (
-    score_faithfulness,
     score_citation_accuracy,
     score_completeness,
+    score_faithfulness,
 )
+from arxiv_rag.io import write_jsonl
 from arxiv_rag.labels import load_labels, load_papers, qrels_for_split
 from arxiv_rag.metrics import (
     evaluate_retrieval,
+    ndcg_at_k,
     recall_at_k,
     reciprocal_rank,
-    ndcg_at_k,
-    bootstrap_interval,
 )
-from arxiv_rag.retrieval import build_runs, collapse_reranked_chunk_ids, rank_chunks
-from arxiv_rag.io import write_jsonl
+from arxiv_rag.retrieval import collapse_reranked_chunk_ids, rank_chunks
 
 
 def main() -> None:
@@ -178,7 +177,10 @@ def main() -> None:
         print("\n=== SUMMARY ===")
         print(f"Test queries: {len(rows)}")
         print(
-            f"Retrieval: Recall@10={retrieval_metrics['recall@10']:.3f}, MRR={retrieval_metrics['mrr']:.3f}, NDCG@10={retrieval_metrics['ndcg@10']:.3f}"
+            "Retrieval: "
+            f"Recall@10={retrieval_metrics['recall@10']:.3f}, "
+            f"MRR={retrieval_metrics['mrr']:.3f}, "
+            f"NDCG@10={retrieval_metrics['ndcg@10']:.3f}"
         )
         if faith_scores:
             print(f"Faithfulness: {sum(faith_scores) / len(faith_scores):.3f}")

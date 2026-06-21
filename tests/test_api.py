@@ -12,7 +12,11 @@ def _make_mock_pipeline() -> MagicMock:
     p.chunk_vectors = None
     p.use_qdrant = True
     p.query.return_value = {
-        "answer": "Based on the provided abstracts, attention mechanisms in transformers enable models to dynamically weigh the importance of different parts of the input sequence.",
+        "answer": (
+            "Based on the provided abstracts, attention mechanisms in transformers "
+            "enable models to dynamically weigh the importance of different parts "
+            "of the input sequence."
+        ),
         "citations": ["2606.09951v1", "2606.17830v1"],
         "evidence": [
             {"paper_id": "2606.09951v1", "title": "Hasse Diagrams for Attention", "text": "..."},

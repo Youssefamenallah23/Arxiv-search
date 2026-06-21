@@ -2,18 +2,16 @@ from __future__ import annotations
 
 import argparse
 import random
+import sys
 from collections import Counter
 from pathlib import Path
-import sys
-import json
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
-from arxiv_rag.labels import load_papers, EXPECTED_SPLITS, validate_labels
+from arxiv_rag.io import write_jsonl
+from arxiv_rag.labels import EXPECTED_SPLITS, load_papers, validate_labels
 from arxiv_rag.lexical import TfidfPaperRanker
 from arxiv_rag.schema import QueryLabel
-from arxiv_rag.io import write_jsonl
-
 
 SEED_QUERIES = [
     "retrieval augmented generation for factual question answering",
@@ -149,7 +147,7 @@ def main() -> None:
 
     for seed in SEED_QUERIES:
         seed_lower = seed.lower()
-        for cat, area in CATEGORY_AREAS.items():
+        for _cat, area in CATEGORY_AREAS.items():
             if area not in seed_lower:
                 cat_query = f"{seed} for {area}"
                 label = make_label(cat_query)

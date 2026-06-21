@@ -1,8 +1,8 @@
 from __future__ import annotations
 
 import argparse
-from pathlib import Path
 import sys
+from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
@@ -15,7 +15,9 @@ from arxiv_rag.retrieval import build_runs, rank_chunks
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Compare chunk sizes with the chosen embedding model.")
+    parser = argparse.ArgumentParser(
+        description="Compare chunk sizes with a chosen embedding model."
+    )
     parser.add_argument("--corpus", required=True)
     parser.add_argument("--labels", required=True)
     parser.add_argument("--split", choices=["train", "validation"], default="validation")

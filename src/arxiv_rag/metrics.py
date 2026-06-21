@@ -1,9 +1,8 @@
 from __future__ import annotations
 
-from collections.abc import Callable, Sequence
 import math
 import random
-
+from collections.abc import Callable, Sequence
 
 Run = Sequence[str]
 

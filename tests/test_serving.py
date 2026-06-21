@@ -1,9 +1,9 @@
 from __future__ import annotations
 
 from unittest import TestCase
-from unittest.mock import MagicMock, patch
+from unittest.mock import patch
 
-from arxiv_rag.serving import _extract_citations, RAGPipeline
+from arxiv_rag.serving import RAGPipeline, _extract_citations
 
 
 class ExtractCitationsTest(TestCase):
