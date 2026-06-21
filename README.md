@@ -1,162 +1,174 @@
 # ArXiv Research Assistant
 
-**Evaluation-first RAG system** over 5,000 AI/ML arXiv paper abstracts. FastAPI backend, Qdrant vector persistence, Streamlit dashboards, W&B experiment tracking.
+Ask research questions about 5,000 AI/ML papers and get cited answers — powered by retrieval-augmented generation.
+
+## The Problem
+
+AI research moves fast. 5,000+ new papers appear on arXiv every month. No researcher can read them all. If you need to answer "which recent papers use diffusion models for 3D generation?", you currently have to:
+
+1. Search arXiv by keyword — get 200 results, most irrelevant
+2. Skim abstracts manually — hours of work
+3. Cross-reference citations — good luck
+
+This project automates that entire process.
+
+## How It Works
+
+RAG = Retrieve + Augment + Generate. When you ask a question:
 
 ```
-query -> embed (bge-small) -> search (numpy/Qdrant) -> rerank (bge-reranker) -> generate (Gemini) -> answer + citations
+Your question: "diffusion models for 3D generation"
+       |
+       v
+  1. EMBED: Convert your question into a mathematical vector
+     (bge-small embedding model -> 384 numbers)
+       |
+       v
+  2. SEARCH: Find the 50 most relevant paper chunks from 5,000
+     (cosine similarity against pre-computed vectors)
+     Backend options: in-memory numpy (instant) or Qdrant DB (persistent)
+       |
+       v
+  3. RERANK: Score those 50 candidates with a cross-encoder
+     (bge-reranker-base picks the best 5)
+       |
+       v
+  4. GENERATE: Send top-5 chunks + your question to Gemini
+     (Gemini 2.0 Flash writes a cited answer)
+       |
+       v
+  Response: answer + citations + evidence papers + timing breakdown
 ```
+
+Total time: ~15-30 seconds per question.
+
+## Results
+
+After evaluating on a held-out test set of 25 labeled queries:
+
+| Metric | Score | What It Means |
+|--------|:-----:|---------------|
+| Recall@10 | 0.332 | 33% of relevant papers appear in top 10 results |
+| MRR | 0.632 | First relevant result is ranked near the top |
+| NDCG@10 | 0.362 | Ranking quality weighted by relevance |
+| Faithfulness | 0.962 | 96% of generated claims are supported by retrieved papers |
+| Citation Accuracy | 0.992 | 99% of citations point to real, relevant papers |
+| Completeness | 1.320 | Answers cover more ground than expected baselines |
+| Avg response time | ~13s | Embed + search + rerank + generate |
+
+Reranking improves retrieval by +2-3% absolute (e.g., MRR 0.657 -> 0.677) but costs ~12s per query. All experiment data on [W&B](https://wandb.ai/ahmedmohmohsen8881-momo/arxiv-rag).
 
 ## Quick Start
 
-### Local
+### Option A: Local (Python)
 
 ```powershell
 python -m venv .venv
 .\.venv\Scripts\Activate.ps1
-python -m pip install -e ".[dev]"
+pip install -e ".[dev]"
 Copy-Item .env.example .env
 ```
 
-Edit `.env` with your API keys:
-- `GEMINI_API_KEY` — generation & evaluation
-- `WANDB_API_KEY` — experiment tracking (optional)
-
-### Docker
+Edit `.env`, set `GEMINI_API_KEY`.
 
 ```powershell
-# Requires Docker Desktop
-$env:GEMINI_API_KEY="your-key-here"
-docker compose up -d
+# Start the API (auto-detects Qdrant DB, falls back to in-memory)
+python scripts\run_api.py --port 8000
+# API at http://localhost:8000, Swagger at http://localhost:8000/docs
 ```
 
-This starts:
-- **API** at `http://localhost:8000` (auto-indexes chunks into Qdrant server)
-- **Streamlit UI** at `http://localhost:8501`
-- **Qdrant server** at `localhost:6333`
-
-Run without the Streamlit UI:
+Or start with persistent Qdrant storage (instant startup):
 ```powershell
-docker compose up -d api qdrant
+python scripts\run_api.py --port 8000 --qdrant-path data/qdrant_db
+```
+
+### Option B: Docker
+
+```powershell
+$env:GEMINI_API_KEY="your-key"
+docker compose up -d
+# API at :8000, Streamlit UI at :8501, Qdrant at :6333
 ```
 
 ## What You Can Do
 
-| Task | Command |
-|------|---------|
-| Chat UI | `.venv\Scripts\streamlit.exe run ui/app.py` |
-| REST API | `.venv\Scripts\python.exe scripts\run_api.py --port 8000` |
-| Monitoring dashboard | `.venv\Scripts\streamlit.exe run ui/dashboard.py` |
-| CLI query | `.venv\Scripts\python.exe scripts\query_arxiv.py` |
-| Label queries | `.venv\Scripts\python.exe scripts\serve_labeler.py` |
-| Run experiments | `scripts/run_embedding_experiment.py --wandb` |
+| Interface | Purpose | How to start |
+|-----------|---------|--------------|
+| **Chat UI** | Ask questions conversationally | `streamlit run ui/app.py` |
+| **REST API** | Integrate with other tools | `python scripts/run_api.py` |
+| **Dashboard** | View metrics, latency, costs | `streamlit run ui/dashboard.py` |
+| **CLI** | Quick queries from terminal | `python scripts/query_arxiv.py` |
+| **Labeler UI** | Create training/eval queries | `python scripts/serve_labeler.py` |
+
+Try a query:
+```powershell
+curl -X POST http://localhost:8000/query ^
+  -H "Content-Type: application/json" ^
+  -d "{\"query\":\"attention mechanisms in transformers\"}"
+```
+
+Response includes the answer, arXiv IDs as citations, evidence excerpts, latency breakdown, and token usage.
 
 ## Architecture
 
 ```
-src/arxiv_rag/
-  api.py           FastAPI app — /health, /query
-  serving.py       RAGPipeline — retrieve -> rerank -> generate
-  vector_store.py  QdrantIndexer + QdrantSearcher
-  retrieval.py     Chunk retrieval & evaluation metrics
-  embeddings.py    SentenceTransformer wrappers
-  generation.py    Gemini generation + evaluation
-  chunking.py      Paper -> overlapping chunks
-  metrics.py       Recall@k, MRR, NDCG, bootstrap
-  schema.py        Paper, Chunk, QueryLabel models
-  config.py        Settings from env vars
-  labels.py        Query label validation
-  arxiv_api.py     arXiv API client
-  io.py            JSONL read/write helpers
+src/arxiv_rag/        Core library
+  api.py              FastAPI app (/health, /query)
+  serving.py          RAGPipeline (retrieve -> rerank -> generate)
+  vector_store.py     QdrantIndexer + QdrantSearcher
+  retrieval.py        Vector search and evaluation
+  embeddings.py       SentenceTransformer wrappers
+  generation.py       Gemini API calls + evaluation scoring
+  chunking.py         Split papers into overlapping chunks
+  metrics.py          Recall@k, MRR, NDCG, bootstrap CI
+  schema.py           Paper, Chunk, QueryLabel Pydantic models
+  config.py           Settings from environment variables
 
-scripts/
-  run_api.py           FastAPI entry point
-  index_qdrant.py      Index chunks into Qdrant (server mode)
-  search_qdrant.py     Search Qdrant from CLI
-  query_arxiv.py       Interactive CLI pipeline
-  run_embedding_experiment.py  Embedding comparison
-  run_chunking_experiment.py   Chunk size comparison
-  run_reranking_experiment.py  Reranker comparison
-  collect_arxiv.py     Download paper corpus
-  build_chunks.py      Pre-compute chunks for Qdrant
-
-ui/
-  app.py         Streamlit chat UI
-  dashboard.py   Monitoring dashboard (5 tabs)
-
-tests/
-  test_api.py, test_serving.py, test_chunking.py,
-  test_metrics.py, test_labels.py, test_annotation.py
+scripts/              Runnable entry points
+tests/                pytest suite (31 tests)
+ui/                   Streamlit interfaces
+data/                 Corpus snapshots + Qdrant storage
+eval/                 Query labels
+reports/              Experiment results
 ```
 
-## API Reference
+### Storage Backends
 
-### `GET /health`
+| Mode | Startup time | Persistence | Dependencies |
+|------|:-----------:|:-----------:|:------------:|
+| In-memory | ~6 min (re-embed 5K papers) | None (RAM) | None |
+| Qdrant local | ~8 sec | SQLite on disk, ~27 MB | None |
+| Qdrant server | ~8 sec | Docker volume | Docker |
 
-```json
-{"status": "ok", "corpus_size": 5000, "index_loaded": true, "mode": "qdrant"}
-```
+All modes produce identical results (same embeddings, same similarity metric).
 
-### `POST /query`
+## Methodology
 
-Request:
-```json
-{"query": "diffusion models for 3D generation", "top_k": 50, "context_budget": 5}
-```
+This project follows an **evaluation-first** protocol to prevent data leakage:
 
-Response:
-```json
-{
-  "query": "diffusion models for 3D generation",
-  "answer": "Based on the provided abstracts...",
-  "citations": ["2606.08957v1", "2606.13451v1"],
-  "evidence": [{"paper_id": "...", "title": "...", "text": "..."}],
-  "latency": {"retrieval": 0.025, "rerank": 10.367, "generation": 3.135, "total": 13.527},
-  "usage": {"prompt_tokens": 899, "completion_tokens": 215, "total_tokens": 1114}
-}
-```
+1. Freeze a dated corpus snapshot before any labeling
+2. Build labeled query splits: 100 train / 25 validation / 25 test
+3. Run all experiments (embedding, chunking, reranking) on train/validation only
+4. Touch the test split exactly once for the final report
 
-Interactive docs at `http://localhost:8000/docs`.
+## Experiment Tracking
 
-## Qdrant Integration
+All experiment results are on [Weights & Biases](https://wandb.ai/ahmedmohmohsen8881-momo/arxiv-rag):
 
-Two retrieval backends:
-
-| Mode | Startup | Persistence | Deps |
-|------|---------|-------------|------|
-| In-memory | ~6 min (re-embed) | None | None |
-| Qdrant (local) | ~8 sec | Disk (SQLite, 27 MB) | None |
-| Qdrant (server) | ~8 sec | Qdrant server | Docker |
-
-Index once, then instant startup:
-```powershell
-.venv\Scripts\python.exe scripts\run_api.py --qdrant-path data/qdrant_db
-```
-
-## Project Principles
-
-1. Freeze a dated arXiv JSONL snapshot — never modify after labeling starts.
-2. Build labeled query splits (100 train / 25 val / 25 test) before tuning.
-3. Run retrieval experiments on train/validation only.
-4. Touch test split once for final end-to-end report.
-5. Deployment is the last priority.
+| Experiment | What We Tested | Winner |
+|------------|---------------|--------|
+| Embedding models | bge-small vs e5-small vs minilm | bge-small (MRR 0.657) |
+| Chunk sizes | 512 vs 768 vs 1024 tokens | No significant difference |
+| Reranking | baseline vs bge-reranker-base | Reranker wins (+0.02 MRR) |
+| Test split (final) | Full pipeline on held-out data | Faithfulness 0.962 |
 
 ## Implementation Status
 
-| Area | Status |
-|------|--------|
-| Corpus collection & data card | Done |
-| Query labeling & validation | Done |
-| Chunking (configurable size/overlap) | Done |
-| Retrieval metrics (Recall@k, MRR, NDCG) | Done |
-| Embedding/chunking/reranking experiments | Done |
-| Generation evaluation (faithfulness, citation) | Done |
-| Failure analysis | Done |
-| CLI query tool | Done |
-| Streamlit chat UI | Done |
-| FastAPI backend | Done |
-| Qdrant vector store (local + server) | Done |
-| Monitoring dashboard | Done |
-| Latency & cost analysis | Done |
-| W&B experiment logging | Done |
-| Docker Compose | Done |
-| AWS deployment | Not started |
+All features complete except AWS deployment (requires account setup).
+
+## Project Principles
+
+1. Corpus snapshots are dated and immutable once labeling starts
+2. Validation set drives model decisions; test set is for final reporting only
+3. Deployment comes last, after the pipeline is measured and proven
+4. Everything is scriptable and reproducible (no manual steps)
