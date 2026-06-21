@@ -18,7 +18,7 @@ User query
      |
 [Reranking]  bge-reranker-base on top-50 results -> top-5
      |
-[Generation] Gemini 2.0 Flash -> answer + citations
+[Generation] Gemini 3.5 Flash lite -> answer + citations
      |
      v
 Structured response: {answer, citations, evidence, latency, usage}
@@ -56,7 +56,7 @@ Same embeddings (bge-small, cosine similarity) -> identical results.
 - Pydantic v2 for request/response validation.
 - Async by default, but RAG pipeline is sync (blocking calls to Gemini/embeddings).
 
-### Google Gemini (2.0 Flash)
+###  Gemini 3.5 Flash lite
 - Free tier available (with rate limits handled by exponential backoff).
 - Good generation quality for summarization with citations.
 - Rate limits: 5 retries with 5s base delay + jitter.
@@ -133,7 +133,7 @@ User query -> embed (bge-small)
 Top 50 chunks -> rerank (bge-reranker-base) -> top 5
     |
     v
-Gemini 2.0 Flash -> answer with [citations]
+ Gemini 3.5 Flash lite -> answer with [citations]
     |
     v
 Structured response
