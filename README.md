@@ -8,6 +8,8 @@ query -> embed (bge-small) -> search (numpy/Qdrant) -> rerank (bge-reranker) -> 
 
 ## Quick Start
 
+### Local
+
 ```powershell
 python -m venv .venv
 .\.venv\Scripts\Activate.ps1
@@ -18,6 +20,24 @@ Copy-Item .env.example .env
 Edit `.env` with your API keys:
 - `GEMINI_API_KEY` — generation & evaluation
 - `WANDB_API_KEY` — experiment tracking (optional)
+
+### Docker
+
+```powershell
+# Requires Docker Desktop
+$env:GEMINI_API_KEY="your-key-here"
+docker compose up -d
+```
+
+This starts:
+- **API** at `http://localhost:8000` (auto-indexes chunks into Qdrant server)
+- **Streamlit UI** at `http://localhost:8501`
+- **Qdrant server** at `localhost:6333`
+
+Run without the Streamlit UI:
+```powershell
+docker compose up -d api qdrant
+```
 
 ## What You Can Do
 
@@ -137,6 +157,6 @@ Index once, then instant startup:
 | Qdrant vector store (local + server) | Done |
 | Monitoring dashboard | Done |
 | Latency & cost analysis | Done |
-| W&B experiment logging | Flag exists, needs invocation |
-| Docker Compose | Not started |
+| W&B experiment logging | Done |
+| Docker Compose | Done |
 | AWS deployment | Not started |
