@@ -34,7 +34,7 @@ Your question: "diffusion models for 3D generation"
        |
        v
   4. GENERATE: Send top-5 chunks + your question to Gemini
-     (Gemini 2.0 Flash writes a cited answer)
+     (Gemini 3.5 Flash lite writes a cited answer)
        |
        v
   Response: answer + citations + evidence papers + timing breakdown
