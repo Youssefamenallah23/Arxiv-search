@@ -178,6 +178,23 @@ data/qdrant_db/  (27 MB on disk)
 
 The API checks for an existing Qdrant DB on startup. If found, uses Qdrant (skip embedding, instant start). If not found, falls back to in-memory numpy (embedding ~6 min). Override with `--use-qdrant` or `--force-in-memory` flags.
 
+## Phase 9: Retrieval Strategy Comparison
+
+Detailed report in `reports/retrieval_comparison.md`.
+
+Compared four retrieval strategies on the **validation split** (25 queries):
+
+| Mode | R@1 | R@5 | R@10 | MRR | NDCG@10 | Lat(mean) |
+|---|---|---|---|---|---|---|
+| dense | 0.056 | 0.172 | 0.268 | 0.657 | 0.317 | 0.019s |
+| **hybrid** (dense + BM25 + RRF) | **0.060** | **0.240** | **0.344** | 0.713 | **0.401** | **0.033s** |
+| adaptive_dense | 0.040 | 0.164 | 0.280 | 0.550 | 0.305 | 3.890s |
+| adaptive_hybrid | 0.060 | 0.220 | 0.332 | **0.724** | 0.387 | 1.804s |
+
+**Winner: Hybrid** — best recall, best NDCG, near-zero latency overhead. Adaptive LLM-based reformulation triggered on 88-96% of queries but didn't improve over the simpler baselines.
+
+The repository now uses hybrid retrieval as the default. The adaptive module (`src/arxiv_rag/adaptive.py`) is available but not recommended — it adds 50-200× latency with no clear benefit.
+
 ## Latency & Cost Analysis
 
 ### Per-Stage Latency (FastAPI benchmark)
@@ -230,6 +247,8 @@ Opens at `http://localhost:8501` with five tabs:
 
 | File | Description |
 |---|---|
+| `src/arxiv_rag/retrieval.py` | Dense search, BM25, hybrid fusion (RRF) |
+| `src/arxiv_rag/adaptive.py` | LLM-based query quality check + reformulation |
 | `src/arxiv_rag/generation.py` | Gemini answer pipeline with retry logic |
 | `src/arxiv_rag/generation_eval.py` | Faithfulness, citation accuracy, completeness scoring |
 | `src/arxiv_rag/serving.py` | RAGPipeline class — corpus → chunk → embed → retrieve → rerank → generate |
@@ -241,6 +260,8 @@ Opens at `http://localhost:8501` with five tabs:
 | `scripts/run_api.py` | FastAPI server entry point (`--use-qdrant`, `--force-in-memory`, `--qdrant-path`) |
 | `scripts/index_qdrant.py` | Index pre-built chunks into Qdrant server (Docker) |
 | `eval/query_labels_2026-06-19.jsonl` | 150 labeled queries (train/validation/test) |
+| `scripts/run_retrieval_comparison.py` | Compare dense / hybrid / adaptive retrieval modes |
+| `reports/retrieval_comparison.md` | Retrieval strategy comparison report |
 | `reports/eval_test_final.jsonl` | Per-query retrieval metrics (test set) |
 | `reports/eval_test_generation.jsonl` | Per-query generation + retrieval metrics (test set) |
 | `reports/data_card_2026-06-19.md` | Corpus statistics |
