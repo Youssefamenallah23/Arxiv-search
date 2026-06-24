@@ -1,6 +1,6 @@
 # ArXiv Research Assistant
 
-I built this to scratch a personal itch: keeping up with AI/ML papers on arXiv is impossible. There are 5,000+ new papers every month, and if you need to find something specific — "which recent papers use diffusion models for 3D generation?" — the options are keyword search (200 results, most irrelevant), skimming abstracts for hours, or relying on Twitter recommendations.
+I built this to scratch a personal itch: keeping up with AI/ML papers on arXiv is impossible. There are 5,000+ new papers every month, and if you need to find something specific  "which recent papers use diffusion models for 3D generation?"  the options are keyword search (200 results, most irrelevant), skimming abstracts for hours, or relying on Twitter recommendations.
 
 So I built a retrieval-augmented generation system over 5,000 arXiv papers. You ask a research question, it finds the most relevant papers, and generates a cited answer. This repo documents the whole thing — the experiments, the failures, and what actually worked.
 
@@ -31,7 +31,7 @@ Your question: "diffusion models for 3D generation"
   Response: answer + citations + evidence papers + timing breakdown
 ```
 
-Total time: ~15-30 seconds per question. All experiment data on [W&B](https://wandb.ai/ahmedmohmohsen8881-momo/arxiv-rag).
+Total time: ~15-30 seconds per question.
 
 ## Results
 
