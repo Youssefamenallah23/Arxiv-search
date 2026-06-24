@@ -4,10 +4,14 @@ import re
 import time
 from pathlib import Path
 
+import numpy as np
+
+from arxiv_rag.adaptive import AdaptiveRetriever
 from arxiv_rag.chunking import chunk_papers, proportional_overlap
 from arxiv_rag.embeddings import CrossEncoderReranker, SentenceTransformerEncoder
 from arxiv_rag.generation import generate_answer
 from arxiv_rag.labels import load_papers
+from arxiv_rag.retrieval import HybridRetriever
 from arxiv_rag.schema import Chunk
 from arxiv_rag.vector_store import QdrantSearcher
 
@@ -35,10 +39,12 @@ class RAGPipeline:
         use_qdrant: bool = False,
         qdrant_path: str | None = None,
         qdrant_searcher: QdrantSearcher | None = None,
+        retrieval_mode: str = "dense",
     ):
         self.chunk_size = chunk_size
         self.llm_model = llm_model
         self.use_qdrant = use_qdrant
+        self.retrieval_mode = retrieval_mode
 
         corpus = Path(corpus_path)
         if not corpus.exists():
@@ -60,6 +66,24 @@ class RAGPipeline:
             chunk_texts = [c.text for c in self.chunks]
             self.chunk_vectors, _ = self.encoder.encode_documents(chunk_texts)
 
+        self._build_retriever()
+
+    def _build_retriever(self) -> None:
+        if self.retrieval_mode in ("hybrid", "adaptive_hybrid"):
+            base = HybridRetriever(
+                self.chunks,
+                self.encoder,
+                self.chunk_vectors,
+            )
+        else:
+            base = None
+
+        if self.retrieval_mode in ("adaptive_dense", "adaptive_hybrid"):
+            retriever = base if base is not None else object()
+            self._retriever = AdaptiveRetriever(retriever, self.chunks)
+        else:
+            self._retriever = base or object()
+
     def query(
         self,
         query: str,
@@ -67,8 +91,14 @@ class RAGPipeline:
         context_budget: int = 5,
     ) -> dict:
         t0 = time.perf_counter()
-        ranked_chunks = self._retrieve(query, top_k)
+        result = self._retrieve(query, top_k)
         retrieval_sec = time.perf_counter() - t0
+
+        if isinstance(result, tuple):
+            ranked_chunks, adaptive_meta = result
+        else:
+            ranked_chunks = result
+            adaptive_meta = None
 
         t0 = time.perf_counter()
         candidates = [(c.chunk_id, c.text) for c in ranked_chunks]
@@ -88,7 +118,7 @@ class RAGPipeline:
         citations = _extract_citations(answer)
         total = retrieval_sec + rerank_sec + gen_sec
 
-        return {
+        response = {
             "answer": answer,
             "citations": citations,
             "evidence": evidence,
@@ -99,13 +129,26 @@ class RAGPipeline:
                 "total": round(total, 3),
             },
             "usage": usage,
+            "retrieval_mode": self.retrieval_mode,
         }
+        if adaptive_meta:
+            response["adaptive"] = {
+                "reformulated": adaptive_meta["reformulated"],
+                "reformulated_query": adaptive_meta.get("reformulated_query"),
+            }
+        return response
 
-    def _retrieve(self, query: str, top_k: int) -> list[Chunk]:
+    def _retrieve(self, query: str, top_k: int) -> list[Chunk] | tuple[list[Chunk], dict]:
         if self.use_qdrant:
             query_vector, _ = self.encoder.encode_queries([query])
             results = self.qdrant_searcher.search(query_vector[0], top_k=top_k)
             return [self.chunk_by_id[cid] for cid, _ in results]
+
+        if isinstance(self._retriever, AdaptiveRetriever):
+            return self._retriever.retrieve(query, top_k)
+
+        if isinstance(self._retriever, HybridRetriever):
+            return self._retriever.retrieve(query, top_k)
 
         query_vector, _ = self.encoder.encode_queries([query])
         scores = query_vector @ self.chunk_vectors.T

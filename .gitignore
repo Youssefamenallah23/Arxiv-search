@@ -12,3 +12,4 @@ reports/*.csv
 reports/*.json
 data/qdrant_db/
 *.log
+*.egg-info/
