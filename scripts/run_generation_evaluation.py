@@ -44,7 +44,7 @@ def main() -> None:
         "--context-budget", type=int, default=5, help="Number of reranked chunks to pass to Gemini"
     )
     parser.add_argument("--llm-model", default="gemini-3.1-flash-lite")
-    parser.add_argument("--output", default="reports/generation_eval_results.jsonl")
+    parser.add_argument("--output", default="data/results/generation_eval_results.jsonl")
     parser.add_argument(
         "--skip-generation",
         action="store_true",

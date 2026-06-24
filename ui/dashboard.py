@@ -232,6 +232,6 @@ with tab5:
     with st.expander("Full failure analysis report"):
         from pathlib import Path
 
-        report_path = Path("reports/failure_analysis_2026-06-20.md")
+        report_path = Path("docs/reports/failure_analysis_2026-06-20.md")
         if report_path.exists():
             st.markdown(report_path.read_text(encoding="utf-8"))

@@ -12,7 +12,7 @@ Evaluation-first RAG system over 5,000 arXiv AI/ML papers. Built and evaluated a
 - Title+abstract only — max token length 324, mean 198
 - All papers fit within one 512-token chunk; chunking is irrelevant
 
-**Labels** (`eval/query_labels_2026-06-19.jsonl`):
+**Labels** (`docs/eval/query_labels_2026-06-19.jsonl`):
 - 150 auto-generated labeled queries via `scripts/auto_label.py`
   - 100 train / 25 validation / 25 test
 - Labels created by TF-IDF relevance ranking against 50 seed queries with category/area variants
@@ -85,7 +85,7 @@ LLM: `gemini-3.1-flash-lite` (Google Gemini 3.1 Flash Lite)
 
 ## Phase 6: Failure Analysis
 
-Full analysis in `reports/failure_analysis_2026-06-20.md`.
+Full analysis in `failure_analysis_2026-06-20.md`.
 
 **Retrieval findings:**
 - 6/25 queries have recall@10 ≤ 0.2; 3/25 have recall@10 = 0.1
@@ -180,7 +180,7 @@ The API checks for an existing Qdrant DB on startup. If found, uses Qdrant (skip
 
 ## Phase 9: Retrieval Strategy Comparison
 
-Detailed report in `reports/retrieval_comparison.md`.
+Detailed report in `retrieval_comparison.md`.
 
 Compared four retrieval strategies on the **validation split** (25 queries):
 
@@ -259,14 +259,14 @@ Opens at `http://localhost:8501` with five tabs:
 | `scripts/query_arxiv.py` | Interactive CLI for asking questions |
 | `scripts/run_api.py` | FastAPI server entry point (`--use-qdrant`, `--force-in-memory`, `--qdrant-path`) |
 | `scripts/index_qdrant.py` | Index pre-built chunks into Qdrant server (Docker) |
-| `eval/query_labels_2026-06-19.jsonl` | 150 labeled queries (train/validation/test) |
+| `docs/eval/query_labels_2026-06-19.jsonl` | 150 labeled queries (train/validation/test) |
 | `scripts/run_retrieval_comparison.py` | Compare dense / hybrid / adaptive retrieval modes |
-| `reports/retrieval_comparison.md` | Retrieval strategy comparison report |
-| `reports/eval_test_final.jsonl` | Per-query retrieval metrics (test set) |
-| `reports/eval_test_generation.jsonl` | Per-query generation + retrieval metrics (test set) |
-| `reports/data_card_2026-06-19.md` | Corpus statistics |
-| `reports/labeling_candidates_2026-06-19.md` | Candidate queries with TF-IDF scores |
-| `reports/failure_analysis_2026-06-20.md` | Detailed failure analysis |
+| `retrieval_comparison.md` | Retrieval strategy comparison report |
+| `data/results/eval_test_final.jsonl` | Per-query retrieval metrics (test set) |
+| `data/results/eval_test_generation.jsonl` | Per-query generation + retrieval metrics (test set) |
+| `data_card_2026-06-19.md` | Corpus statistics |
+| `labeling_candidates_2026-06-19.md` | Candidate queries with TF-IDF scores |
+| `failure_analysis_2026-06-20.md` | Detailed failure analysis |
 | `ui/app.py` | Streamlit web UI for asking questions |
 
 ## Pipeline Architecture

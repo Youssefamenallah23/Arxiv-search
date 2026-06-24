@@ -11,7 +11,7 @@ from arxiv_rag.config import Settings
 
 def main() -> None:
     settings = Settings()
-    eval_path = Path("reports/eval_test_generation.jsonl")
+    eval_path = Path("data/results/eval_test_generation.jsonl")
     if not eval_path.exists():
         print(f"Eval data not found: {eval_path}")
         sys.exit(1)

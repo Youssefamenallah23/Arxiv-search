@@ -10,5 +10,5 @@ wandb/
 logs/
 reports/*.csv
 reports/*.json
-eval/
-plans/
+docs/eval/
+docs/plans/

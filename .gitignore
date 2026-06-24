@@ -5,11 +5,11 @@ __pycache__/
 .ruff_cache/
 .pytest_cache/
 wandb/
-data/raw/*.jsonl
-data/processed/*.jsonl
-data/processed/*.json
+data/
+config/.env
 reports/*.csv
 reports/*.json
-data/qdrant_db/
 *.log
 *.egg-info/
+src/arxiv_rag.egg-info/
+logs/

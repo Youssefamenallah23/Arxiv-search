@@ -10,7 +10,7 @@ from arxiv_rag.annotation import LabelPayload, LabelStore
 
 def create_app(
     corpus_path: str | Path = "data/raw/arxiv_corpus_2026-06-19.jsonl",
-    labels_path: str | Path = "eval/query_labels_2026-06-19.jsonl",
+    labels_path: str | Path = "docs/eval/query_labels_2026-06-19.jsonl",
 ) -> FastAPI:
     app = FastAPI(title="ArXiv RAG Labeler")
     store = LabelStore(corpus_path=corpus_path, labels_path=labels_path)

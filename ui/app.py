@@ -95,7 +95,7 @@ with st.sidebar:
         "**Pipeline:** bge-small → bge-reranker-base → gemini-3.1-flash-lite\n\n"
         "**Evaluation:** Recall@10=0.332, Faithfulness=0.932, "
         "Citation Acc=0.950\n\n"
-        "[View full report](../reports/README.md)"
+        "[View full report](../docs/reports/README.md)"
     )
 
     with st.expander("Settings"):

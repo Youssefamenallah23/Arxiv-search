@@ -1,6 +1,6 @@
 # Labeling Guide
 
-Use this guide to create `eval/query_labels_2026-06-19.jsonl`.
+Use this guide to create `docs/eval/query_labels_2026-06-19.jsonl`.
 
 ## Rules
 
@@ -27,7 +27,7 @@ python scripts/search_corpus.py --corpus data/raw/arxiv_corpus_2026-06-19.jsonl 
 6. Validate the file:
 
 ```powershell
-python scripts/validate_labels.py --labels eval/query_labels_2026-06-19.jsonl --corpus data/raw/arxiv_corpus_2026-06-19.jsonl
+python scripts/validate_labels.py --labels docs/eval/query_labels_2026-06-19.jsonl --corpus data/raw/arxiv_corpus_2026-06-19.jsonl
 ```
 
 ## Query Design

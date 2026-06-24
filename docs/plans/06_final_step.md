@@ -6,7 +6,7 @@
 |---|---|---|
 | Retrieval eval (Recall@5/10, MRR, NDCG) | ✅ Done | Reported on held-out test set |
 | Generation eval (Faithfulness, Citation, Completeness) | ✅ Done | 25 queries, final numbers in README |
-| Failure analysis | ✅ Done | `reports/failure_analysis_2026-06-20.md` |
+| Failure analysis | ✅ Done | `docs/reports/failure_analysis_2026-06-20.md` |
 | CLI tool | ✅ Done | `scripts/query_arxiv.py` |
 | Streamlit UI | ✅ Done | `ui/app.py` — running on localhost:8501 |
 | **FastAPI backend** | ❌ Not started | Need to split pipeline into HTTP API |
@@ -80,7 +80,7 @@ Each experiment script (`run_embedding_experiment.py`, `run_reranking_experiment
 1. Run with `--wandb` flag: `.\.venv\Scripts\python.exe scripts/run_embedding_experiment.py --corpus ... --labels ... --wandb`
 2. Set `WANDB_PROJECT=arxiv-rag` in `.env`
 3. Verify runs appear in W&B dashboard
-4. Add W&B links to `reports/README.md`
+4. Add W&B links to `docs/reports/README.md`
 
 ---
 
@@ -187,7 +187,7 @@ Add a new Streamlit page alongside the chat UI. Switch between them with a sideb
 5. **Cost tracker** — running total cost based on token usage from eval runs
 6. **Failure analysis summary** — count of queries by failure category
 
-**Data source:** `reports/eval_test_generation.jsonl` (already has all fields)
+**Data source:** `data/results/eval_test_generation.jsonl` (already has all fields)
 
 **Implementation:**
 ```python
@@ -199,7 +199,7 @@ import json
 st.set_page_config(page_title="ArXiv RAG Dashboard", layout="wide")
 
 # Load eval data
-with open("reports/eval_test_generation.jsonl") as f:
+with open("data/results/eval_test_generation.jsonl") as f:
     rows = [json.loads(line) for line in f]
 
 # Tab 1: Retrieval metrics
@@ -274,7 +274,7 @@ Priority 7: W&B logging (8.3)
 docker compose up -d
 
 # Run experiment with W&B logging
-.\.venv\Scripts\python.exe scripts/run_embedding_experiment.py --corpus data/raw/arxiv_corpus_2026-06-19.jsonl --labels eval/query_labels_2026-06-19.jsonl --split validation --wandb
+.\.venv\Scripts\python.exe scripts/run_embedding_experiment.py --corpus data/raw/arxiv_corpus_2026-06-19.jsonl --labels docs/eval/query_labels_2026-06-19.jsonl --split validation --wandb
 
 # Dashboard
 .\.venv\Scripts\streamlit.exe run ui/dashboard.py

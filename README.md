@@ -37,7 +37,7 @@ Total time: ~15-30 seconds per question.
 
 ### Retrieval: Hybrid (dense + BM25) is the clear winner
 
-I compared four retrieval strategies on 25 validation queries. The full report is at `reports/retrieval_comparison.md`.
+I compared four retrieval strategies on 25 validation queries. The full report is at `docs/reports/retrieval_comparison.md`.
 
 | Mode | R@1 | R@5 | R@10 | MRR | NDCG@10 | Latency | Reform% |
 |---|---|---|---|---|---|---|---|
@@ -134,9 +134,9 @@ src/arxiv_rag/        Core library
 scripts/              Runnable entry points
 tests/                pytest suite (31 tests)
 ui/                   Streamlit interfaces
-data/                 Corpus snapshots + Qdrant storage
-eval/                 Query labels
-reports/              Experiment results
+data/                 Corpus snapshots + Qdrant storage + experiment results
+config/               Docker, Compose, environment config
+docs/                 Documentation, reports, plans, labels
 ```
 
 ### Storage Backends

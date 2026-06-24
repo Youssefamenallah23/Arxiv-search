@@ -42,7 +42,7 @@ def main() -> None:
         description="Compare dense vs hybrid vs adaptive retrieval modes."
     )
     parser.add_argument("--corpus", default="data/raw/arxiv_corpus_2026-06-19.jsonl")
-    parser.add_argument("--labels", default="eval/query_labels_2026-06-19.jsonl")
+    parser.add_argument("--labels", default="docs/eval/query_labels_2026-06-19.jsonl")
     parser.add_argument("--split", choices=["train", "validation"], default="validation")
     parser.add_argument("--chunk-size", type=int, default=512)
     parser.add_argument("--top-k-chunks", type=int, default=50)

@@ -14,7 +14,7 @@ from arxiv_rag.annotation_app import create_app
 def main() -> None:
     parser = argparse.ArgumentParser(description="Serve the local query relevance labeler.")
     parser.add_argument("--corpus", default="data/raw/arxiv_corpus_2026-06-19.jsonl")
-    parser.add_argument("--labels", default="eval/query_labels_2026-06-19.jsonl")
+    parser.add_argument("--labels", default="docs/eval/query_labels_2026-06-19.jsonl")
     parser.add_argument("--host", default="127.0.0.1")
     parser.add_argument("--port", type=int, default=8010)
     args = parser.parse_args()

@@ -152,7 +152,7 @@ run_reranking_experiment.py  (compare rerankers on val)
 run_generation_evaluation.py (test split, final report)
     |
     v
-W&B logs + reports/
+W&B logs + docs/reports/
 ```
 
 ---
@@ -167,7 +167,7 @@ tests/                 pytest suite (31 tests)
 data/raw/              Frozen JSONL corpus snapshots
 data/processed/        Pre-computed chunks
 data/qdrant_db/        Persistent Qdrant vectors
-eval/                  Query labels
-reports/               Data cards, experiment reports, failure analysis
-plans/                 Project plans & methodology docs
+docs/eval/             Query labels
+docs/reports/          Data cards, experiment reports, failure analysis
+docs/plans/            Project plans & methodology docs
 ```
