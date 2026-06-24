@@ -64,7 +64,7 @@ Same embeddings (bge-small, cosine similarity) -> identical results.
 ### Weights & Biases
 - Experiment tracking for retrieval/generation metrics.
 - Logs per-model results, hyperparameters, latency, cost.
-- View at: https://wandb.ai/ahmedmohmohsen8881-momo/arxiv-rag
+
 
 ### Streamlit
 - Rapid prototyping for dashboards and chat UI.
