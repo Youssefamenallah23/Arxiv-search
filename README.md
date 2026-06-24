@@ -35,6 +35,18 @@ Total time: ~15-30 seconds per question.
 
 ## Results
 
+### Embedding model comparison
+
+I compared three embedding models on the validation set before settling on bge-small:
+
+| Model | MRR | Recall@10 | Latency |
+|---|---|---|---|
+| **BAAI/bge-small-en-v1.5** | **0.657** | **0.268** | **0.02s** |
+| intfloat/e5-small-v2 | 0.612 | 0.244 | 0.02s |
+| all-MiniLM-L6-v2 | 0.589 | 0.232 | 0.01s |
+
+bge-small won on both MRR and recall. The full W&B logs are at the link below.
+
 ### Retrieval: Hybrid (dense + BM25) is the clear winner
 
 I compared four retrieval strategies on 25 validation queries. The full report is at `docs/reports/retrieval_comparison.md`.
@@ -63,6 +75,11 @@ Bottom line: **hybrid retrieval is the new default**. I also tried an LLM-based 
 | Citation Accuracy | 0.992 | 99% of citations point to real, relevant papers |
 | Completeness | 1.320 | Answers cover more ground than expected baselines |
 | Avg response time | ~13s | Embed + search + rerank + generate |
+
+### Recent improvements
+
+- **Validation query cleanup** — 9 of 25 validation queries had auto-label artifacts (doubled words, truncated phrases, stacked domains). Rewrote them into proper research questions so the eval results reflect real queries, not script output.
+- **Completeness scorer upgrade** — Replaced naive substring matching (`point in answer`) with ROUGE-1 F1, a standard NLP overlap metric. The old scorer scored 23/25 queries as 1/5 because it required verbatim query text in the answer. The new scorer correctly recognizes semantic coverage even when the answer rephrases the query.
 
 ## Quick Start
 

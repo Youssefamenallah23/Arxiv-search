@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import re
+from collections import Counter
 from collections.abc import Sequence
 
 
@@ -67,19 +68,69 @@ def score_citation_accuracy(
     return correct / len(citations), results
 
 
+def _tokenize(text: str) -> list[str]:
+    return re.findall(r"\w+(?:'\w+)?", text.lower())
+
+
+def _get_ngrams(tokens: list[str], n: int) -> list[tuple[str, ...]]:
+    if n == 1:
+        return [(t,) for t in tokens]
+    return list(zip(*(tokens[i:] for i in range(n)), strict=False))
+
+
+def _rouge_n_f1(
+    candidate_tokens: list[str],
+    reference_tokens: list[str],
+    n: int,
+) -> float:
+    cand_ngrams = _get_ngrams(candidate_tokens, n)
+    ref_ngrams = _get_ngrams(reference_tokens, n)
+
+    if not ref_ngrams:
+        return 1.0 if not cand_ngrams else 0.0
+    if not cand_ngrams:
+        return 0.0
+
+    cand_counts = Counter(cand_ngrams)
+    ref_counts = Counter(ref_ngrams)
+
+    overlap = sum(min(cand_counts[ng], ref_counts.get(ng, 0)) for ng in cand_counts)
+
+    precision = overlap / len(cand_ngrams)
+    recall = overlap / len(ref_ngrams)
+
+    if precision + recall == 0:
+        return 0.0
+    return 2 * precision * recall / (precision + recall)
+
+
 def score_completeness(
     query: str,
     answer: str,
     key_points: list[str],
 ) -> tuple[int, list[dict]]:
-    answer_lower = answer.lower()
+    answer_tokens = _tokenize(answer)
     covered = 0
     results: list[dict] = []
     for point in key_points:
-        is_covered = point.lower() in answer_lower
+        point_tokens = _tokenize(point)
+
+        if not point_tokens:
+            rouge_f1 = 1.0
+            is_covered = True
+        else:
+            rouge_f1 = _rouge_n_f1(answer_tokens, point_tokens, 1)
+            is_covered = rouge_f1 >= 0.25
+
         if is_covered:
             covered += 1
-        results.append({"key_point": point, "covered": is_covered})
+        results.append(
+            {
+                "key_point": point,
+                "covered": is_covered,
+                "rouge_f1": round(rouge_f1, 4),
+            }
+        )
 
     total = len(key_points)
     if total == 0:
